@@ -14,3 +14,8 @@ if [ ! -z "$ssh_host_rsa_key_path" ]; then
   cp $ssh_host_rsa_key_path.pub $img_staging_dir/etc/ssh/ssh_host_rsa_key.pub
 fi
 
+if [ ! ${#ssh_authorized_keys[@]} = 0 ]; then
+  print_header "Disabling password-based SSH logins"
+  sed -i -e 's/^#PasswordAuthentication yes/PasswordAuthentication no/' $img_staging_dir/etc/ssh/sshd_config  
+fi
+
