@@ -51,6 +51,25 @@ function archive_staging_dir {
   tar -cf $filename -C work `basename $img_staging_dir`
 }
 
+function extract_staging_dir {
+  file=$1
+  print_header "Extracting $file"
+
+  if [ ! -f "$file" ]; then
+    die "$file not found"
+  fi
+
+  rm -rf $img_staging_dir
+  mkdir -p work
+
+  path=`readlink -e $file`
+  (cd work; tar -xf $path)
+
+  if [ ! -d $img_staging_dir ]; then
+    die "$file does not contain a staging dir"
+  fi
+}
+
 function remove_staging_dir {
   print_header "Deleting the staging directory"
   rm -rf $img_staging_dir
@@ -61,6 +80,18 @@ function set_work_dir_permissions {
   if [ ! -z "user" ]; then
     print_header "Making $user the owner of work/*"
     chown $user:$user work/*
+  fi
+}
+
+function find_img_device {
+  loop_dev=`losetup -a | grep $img_file | awk '{print $1}'`
+  loop_name=${loop_dev#/dev/}
+  loop_name=${loop_name%?}
+
+  if [ ! -z "$loop_name" ]; then
+    img_device=/dev/mapper/${loop_name}p1
+  else
+    img_device=
   fi
 }
 

@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+print_header "Moving files from the staging directory into the image"
+mv $img_staging_dir/* $img_mount_dir
+

@@ -1,0 +1,14 @@
+#!/bin/bash -e
+
+# detach if necessary
+find_img_device
+if [ ! -z "$img_device" ]; then
+  ./99-cleanup
+fi
+
+print_header "Creating devices for partitions in $img_file"
+kpartx -av $img_file
+
+find_img_device
+print_header "Primary partition mapped to $img_device"
+

@@ -19,6 +19,10 @@ TODO docme
 
 Generate the image
 ------------------
-TODO docme
-+ sudo
+```bash
+sudo ./image-debootstrap -s bundle -c config/some-config-file [-a another-disk.staging.tar]
+```
+- creates 'work/disk.img', containing a partition table, and a bootable partition with the installation
+- qemu-system-$arch work/disk.img launches the image in qemu
+- dd if=work/disk.img of=/dev/$someDevice writes the image onto a disk
 

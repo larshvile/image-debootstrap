@@ -1,0 +1,12 @@
+#!/bin/bash -e
+
+print_header "Formatting the primary partition as $filesystem"
+mkfs.$filesystem $img_device
+tune2fs -i 0 $img_device
+
+if [ ! -z "`cat /etc/issue | grep Ubuntu`" ]; then
+  echo "> Unmounting $img_device (stubuntu fix)"
+  sleep 2
+  umount $img_device || true
+fi
+

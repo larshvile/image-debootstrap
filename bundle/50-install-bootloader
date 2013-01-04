@@ -1,0 +1,24 @@
+#!/bin/bash -e
+
+print_header "Installing extlinux as the bootloader"
+extlinux --install $img_mount_dir
+
+kernel_image=/boot/`basename $img_mount_dir/boot/vmlinuz-*`
+initrd_image=/boot/`basename $img_mount_dir/boot/initrd.img-*`
+disk_uuid=`/sbin/blkid -p -o value -s UUID $img_device`
+
+if [ ! -z "$serial_console" ]; then
+  serial_opts="console=$serial_console,$serial_console_baud"
+fi
+
+cat > $img_mount_dir/extlinux.conf <<END
+default linux
+timeout 1
+
+label linux
+kernel $kernel_image
+append initrd=$initrd_image root=UUID=$disk_uuid ro quiet $serial_opts
+END
+
+print_file "extlinux configuration" $img_mount_dir/extlinux.conf
+

@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+print_header "Mounting $img_device at $img_mount_dir"
+mkdir -p $img_mount_dir
+mount $img_device $img_mount_dir
+

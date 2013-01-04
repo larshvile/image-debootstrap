@@ -1,0 +1,11 @@
+#!/bin/bash -e
+
+print_header "Creating a new image, size: $img_size_bytes"
+dd if=/dev/zero of=$img_file bs=$img_size_bytes count=1
+
+print_header "Creating a single, bootable partition"
+parted -s $img_file mklabel msdos
+parted -s --align none $img_file mkpart primary 0 100%
+parted -s $img_file set 1 boot on
+parted -s $img_file print
+

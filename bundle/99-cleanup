@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ -d $img_mount_dir ]; then
+  print_header "Unmounting $img_mount_dir"
+  set +e
+  mounted=true
+  while $mounted; do
+    umount $img_mount_dir
+    if [ $? = 0 ]; then
+      mounted=false
+    else
+      sleep 1
+    fi
+  done
+  set -e
+  rm -r $img_mount_dir
+fi
+
+find_img_device
+if [ ! -z "$img_device" ]; then
+  echo "> Removing devices for $img_file"
+  kpartx -d $img_file
+fi
+

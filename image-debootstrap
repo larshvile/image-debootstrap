@@ -29,16 +29,20 @@ img_staging_dir=$img_mount_dir.staging
 
 
 # parse parameters
-stage= #install|customize|bundle
-config= #config-file
+stage= # install|customize|bundle
+config= # config-file
+disk_archive= # tar-file contaning the disk.staging folder for further processing
 
 if ( ! getopts "s:c:" opt); then
-  echo "Usage: `basename $0` -s install|customize|bundle -c path-to-config-file"; # TODO custom scripts [-s customize-scripts-path] ?
+  echo "Usage: `basename $0` -s install|customize|bundle -c path-to-config-file [-a disk.staging.tar]"; # TODO custom scripts [-s customize-scripts-path] ?
   exit $E_OPTERROR;
 fi
 
-while getopts "s:c:" opt; do
+while getopts "a:s:c:" opt; do
   case $opt in
+    a)
+      disk_archive=$OPTARG
+      ;;
     s)
       stage=$OPTARG
       ;;
@@ -88,6 +92,12 @@ case $stage in
     echo "Installing into $img_staging_dir"
     run_in_order install
     archive_staging_dir
+    ;;
+  bundle)
+    echo "Creating bootable image in $img_file"
+    [ -z "$disk_archive" ] && disk_archive="$img_staging_dir.customize.tar"
+    extract_staging_dir $disk_archive
+    run_in_order bundle
     ;;
   *)
     die "Invalid stage, use one of install|customize|bundle"
