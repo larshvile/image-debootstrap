@@ -17,8 +17,9 @@ serial_console= # ttyS0
 serial_console_baud= # 9600|19200|...
 apt_mirror=ftp://ftp.no.debian.org/debian/
 ssh_server=true
+ping_broadcast_reply=false
 
-base_packages="netbase,ifupdown,net-tools,isc-dhcp-client,localepurge,procps,less,nano,inetutils-ping"
+base_packages="netbase,ifupdown,net-tools,isc-dhcp-client,localepurge,procps,less,nano,inetutils-ping,ifplugd"
 debootstrap_variant=minbase
 
 # Constants
@@ -78,6 +79,7 @@ print_cfg extra_packages $extra_packages
 print_cfg serial_console $serial_console
 print_cfg serial_console_baud $serial_console_baud
 print_cfg ssh_server $ssh_server
+print_cfg ping_broadcast_reply $ping_broadcast_reply
 
 print_cfg base_packages $base_packages
 print_cfg debootstrap_variant $debootstrap_variant

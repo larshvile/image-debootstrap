@@ -24,3 +24,11 @@ done
 
 print_file /etc/network/interfaces $img_staging_dir/etc/network/interfaces
 
+if $ping_broadcast_reply; then
+  print_header "Enabling ping broadcast replies"
+  echo "net.ipv4.icmp_echo_ignore_broadcasts=0" >> $img_staging_dir/etc/sysctl.conf
+fi
+
+print_header "Configuring ifplugd for fully automatic network configuration"
+echo "INTERFACES=\"all\"" >> $img_staging_dir/etc/default/ifplugd
+

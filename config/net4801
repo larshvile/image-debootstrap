@@ -13,3 +13,5 @@ serial_console_baud=19200
 
 dhcp_interfaces="eth0 eth1 eth2"
 
+ping_broadcast_reply=true
+
