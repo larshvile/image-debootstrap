@@ -1,10 +1,28 @@
 #!/bin/bash -e
 
+mount_opts="errors=remount-ro"
+
+if $flash_drive; then
+  mount_opts="noatime,$mount_opts"
+fi
+
 print_header "Installing a basic fstab"
 cat > $img_staging_dir/etc/fstab <<END
 proc /proc proc defaults 0 0
-/dev/sda1 / $filesystem errors=remount-ro 0 1
+/dev/sda1 / $filesystem $mount_opts 0 1
 END
+
+if $flash_drive; then
+  print_header "Adding tmpfs filesystems (flash-drive mode)"
+  cat >> $img_staging_dir/etc/fstab <<END
+tmpfs /tmp tmpfs defaults,noatime 0 0
+tmpfs /var/log tmpfs defaults,noatime 0 0
+tmpfs /var/tmp tmpfs defaults,noatime 0 0
+tmpfs /var/run tmpfs defaults,noatime 0 0
+tmpfs /var/lock tmpfs defaults,noatime 0 0
+tmpfs /var/spool tmpfs defaults,noatime 0 0
+END
+fi
 
 print_file /etc/fstab $img_staging_dir/etc/fstab
 

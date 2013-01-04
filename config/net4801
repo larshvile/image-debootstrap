@@ -10,6 +10,7 @@ hostname=net4801
 
 serial_console=ttyS0
 serial_console_baud=19200
+flash_drive=true
 
 dhcp_interfaces="eth0 eth1 eth2"
 

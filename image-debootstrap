@@ -15,6 +15,7 @@ dhcp_interfaces= # network interfaces with dhcp config "eth0 eth1 .."
 extra_packages="" # same format as base_packages
 serial_console= # ttyS0
 serial_console_baud= # 9600|19200|...
+flash_drive=false # flash-drive mode, noatime on writable file systems + heavily used folders mounted as tmpfs
 apt_mirror=ftp://ftp.no.debian.org/debian/
 ssh_server=true
 ping_broadcast_reply=false
@@ -78,6 +79,7 @@ validate_cfg dhcp_interfaces $dhcp_interfaces
 print_cfg extra_packages $extra_packages
 print_cfg serial_console $serial_console
 print_cfg serial_console_baud $serial_console_baud
+print_cfg flash_drive $flash_drive
 print_cfg ssh_server $ssh_server
 print_cfg ping_broadcast_reply $ping_broadcast_reply
 
