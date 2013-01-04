@@ -1,0 +1,5 @@
+#!/bin/bash -e
+
+print_header "Blacklisting the pcspkr module"
+echo "blacklist pcspkr" >> $img_staging_dir/etc/modprobe.d/blacklist.conf
+
