@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+if ! $ssh_server; then
+  echo "ssh server not installed"
+  exit
+fi
+
+print_header "Disabling reverse DNS-lookups from sshd"
+echo "UseDNS no" >> $img_staging_dir/etc/ssh/sshd_config
+
