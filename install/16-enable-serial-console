@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+if [ -z "$serial_console" ]; then
+  echo "No serial console defined in config"
+  exit 0
+fi
+
+print_header "Enabling tty on $serial_console"
+echo "T0:23:respawn:/sbin/getty -L $serial_console $serial_console_baud vt100" >> $img_staging_dir/etc/inittab
+

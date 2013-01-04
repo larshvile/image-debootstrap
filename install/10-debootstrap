@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+db_args="--arch $arch --variant=$debootstrap_variant --include=$kernel_package,$base_packages,$extra_packages $dist $img_staging_dir $apt_mirror"
+db_args_hash=`echo $db_args | sha1sum | awk '{print $1}'`
+db_tarball=work/debootstrap-$db_args_hash.tar
+
+echo "> Debootstrap arguments: $db_args"
+
+# prepare a tarball, if necessary
+if [ ! -f $db_tarball ]; then
+  echo "> Creating a new bootstrap tarball at $db_tarball"
+  debootstrap --make-tarball=$db_tarball $db_args || true
+else
+  echo "> Using existing bootstrap tarball at $db_tarball"
+fi
+
+echo "> Installing debian $dist in $img_staging_dir"
+debootstrap --unpack-tarball=`readlink -e $db_tarball` $db_args
+

@@ -1,0 +1,100 @@
+#!/bin/bash -e
+
+. utils
+
+# Required config overwritten by the config file
+img_size_bytes= # $((1024 * 1024 * 512))
+arch= # debian architecture, i386|amd64|...
+dist= # debian dist, squeeze|wheezy|...
+kernel_package= # linux-image-686
+root_pwd= # password
+hostname=
+dhcp_interfaces= # network interfaces with dhcp config "eth0 eth1 .."
+
+# Standard configuration, possible to override in the config file
+extra_packages="" # same format as base_packages
+serial_console= # ttyS0
+serial_console_baud= # 9600|19200|...
+apt_mirror=ftp://ftp.no.debian.org/debian/
+ssh_server=true
+
+base_packages="netbase,ifupdown,net-tools,isc-dhcp-client,localepurge,procps,less,nano,inetutils-ping"
+debootstrap_variant=minbase
+
+# Constants
+filesystem=ext2
+img_file=work/disk.img
+img_mount_dir=work/disk
+img_staging_dir=$img_mount_dir.staging
+
+
+# parse parameters
+stage= #install|customize|bundle
+config= #config-file
+
+if ( ! getopts "s:c:" opt); then
+  echo "Usage: `basename $0` -s install|customize|bundle -c path-to-config-file"; # TODO custom scripts [-s customize-scripts-path] ?
+  exit $E_OPTERROR;
+fi
+
+while getopts "s:c:" opt; do
+  case $opt in
+    s)
+      stage=$OPTARG
+      ;;
+    c)
+      config=$OPTARG
+      [ -f $config ] || die "$config is not a file"
+      ;;
+    \?)
+      die "Invalid option"
+      ;;
+  esac
+done
+
+
+# load the custom config
+[ -z "$config" ] && die "No config file specified"
+. $config
+
+if $ssh_server; then
+  base_packages="$base_packages,openssh-server"
+fi
+
+echo "Using configuration:"
+validate_cfg img_size_bytes $img_size_bytes
+validate_cfg arch $arch
+validate_cfg dist $dist
+validate_cfg kernel_package $kernel_package
+validate_cfg root_pwd $root_pwd
+validate_cfg hostname $hostname
+validate_cfg dhcp_interfaces $dhcp_interfaces
+
+print_cfg extra_packages $extra_packages
+print_cfg serial_console $serial_console
+print_cfg serial_console_baud $serial_console_baud
+print_cfg ssh_server $ssh_server
+
+print_cfg base_packages $base_packages
+print_cfg debootstrap_variant $debootstrap_variant
+
+echo
+echo
+
+
+# handle the selected stage
+case $stage in
+  install)
+    echo "Installing into $img_staging_dir"
+    run_in_order install
+    archive_staging_dir
+    ;;
+  *)
+    die "Invalid stage, use one of install|customize|bundle"
+    ;;
+esac
+
+# delete the current staging dir & set permissions
+remove_staging_dir
+set_work_dir_permissions
+

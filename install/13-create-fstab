@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+print_header "Installing a basic fstab"
+cat > $img_staging_dir/etc/fstab <<END
+proc /proc proc defaults 0 0
+/dev/sda1 / $filesystem errors=remount-ro 0 1
+END
+
+print_file /etc/fstab $img_staging_dir/etc/fstab
+

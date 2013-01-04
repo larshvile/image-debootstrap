@@ -1,0 +1,66 @@
+
+function echo_err {
+  echo "$1" 1>&2
+}
+
+function die {
+  echo_err "ERROR: $@"
+  exit 1
+}
+
+function print_cfg {
+  name=$1
+  shift
+  echo "$name: \"$@\""
+}
+
+function validate_cfg {
+  print_cfg $@
+  if [ -z "$2" ]; then
+    die "$1 must be specified in the config file"
+  fi
+}
+
+function print_header {
+  echo "> $@"
+}
+
+function print_file {
+  echo "[$1]"
+  cat $2
+  echo
+}
+
+function run_in_order {
+  path=$1
+  for s in `ls $path`; do
+    file=$path/$s
+    if [[ -f $file && -x $file ]]; then
+      echo ""
+      echo "$s"
+      echo "-----------------------------------------------------------"
+      source $file
+      echo
+    fi
+  done
+}
+
+function archive_staging_dir {
+  filename=$img_staging_dir.$stage.tar
+  print_header "Creating $filename"
+  tar -cf $filename -C work `basename $img_staging_dir`
+}
+
+function remove_staging_dir {
+  print_header "Deleting the staging directory"
+  rm -rf $img_staging_dir
+}
+
+function set_work_dir_permissions {
+  user=$SUDO_USER
+  if [ ! -z "user" ]; then
+    print_header "Making $user the owner of work/*"
+    chown $user:$user work/*
+  fi
+}
+

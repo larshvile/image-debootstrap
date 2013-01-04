@@ -1,0 +1,26 @@
+#!/bin/bash -e
+
+print_header "Setting the hostname to $hostname"
+echo "$hostname" > $img_staging_dir/etc/hostname
+
+print_header "Removing bogus /etc/udev/rules.d/70-persistent-net.rules"
+rm -f $img_staging_dir/etc/udev/rules.d/70-persistent-net.rules
+
+print_header "Configuring loopback network"
+cat > $img_staging_dir/etc/network/interfaces <<END
+auto lo
+iface lo inet loopback
+
+END
+
+for iface in $dhcp_interfaces; do
+  print_header "Configuring $iface for DHCP"
+  cat >> $img_staging_dir/etc/network/interfaces <<END
+allow-hotplug $iface
+iface $iface inet dhcp
+
+END
+done
+
+print_file /etc/network/interfaces $img_staging_dir/etc/network/interfaces
+

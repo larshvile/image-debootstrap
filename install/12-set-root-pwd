@@ -1,0 +1,10 @@
+#!/bin/bash -e
+
+print_header "Setting the root password"
+chroot $img_staging_dir <<__END__
+passwd root <<__PWD__
+$root_pwd
+$root_pwd
+__PWD__
+__END__
+

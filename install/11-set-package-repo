@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+print_header "Setting $apt_mirror as the package repository"
+echo "deb $apt_mirror $dist main" > $img_staging_dir/etc/apt/sources.list
+chroot $img_staging_dir apt-get update
+

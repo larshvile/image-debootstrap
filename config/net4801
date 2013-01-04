@@ -1,0 +1,15 @@
+# config for the Soekris net4801 board
+
+img_size_bytes=256901120 # SanDisk ultra II 256MB CF card
+arch=i386
+dist=squeeze
+kernel_package=linux-image-486
+
+root_pwd=dev
+hostname=net4801
+
+serial_console=ttyS0
+serial_console_baud=19200
+
+dhcp_interfaces="eth0 eth1 eth2"
+

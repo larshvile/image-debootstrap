@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+print_header "Creating staging directory $img_staging_dir"
+rm -rf $img_staging_dir
+mkdir -p $img_staging_dir
+

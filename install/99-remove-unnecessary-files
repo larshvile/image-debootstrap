@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+print_header "Removing locales & manpages"
+cat > $img_staging_dir/etc/locale.nopurge <<END
+MANDELETE
+DONTBOTHERNEWLOCALE
+SHOWFREEDSPACE
+en
+END
+chroot $img_staging_dir localepurge
+chroot $img_staging_dir apt-get -y purge localepurge
+
+print_header "Removing cached files"
+chroot $img_staging_dir apt-get clean
+rm $img_staging_dir/var/cache/apt/archives/* || true
+rm $img_staging_dir/var/cache/apt/*.bin || true
+rm $img_staging_dir/var/lib/apt/lists/* || true
+rm -r $img_staging_dir/var/log/* || true
+
