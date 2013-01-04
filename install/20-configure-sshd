@@ -8,3 +8,9 @@ fi
 print_header "Disabling reverse DNS-lookups from sshd"
 echo "UseDNS no" >> $img_staging_dir/etc/ssh/sshd_config
 
+if [ ! -z "$ssh_host_rsa_key_path" ]; then
+  print_header "Installing custom SSH host key from $ssh_host_rsa_key_path"
+  cp $ssh_host_rsa_key_path $img_staging_dir/etc/ssh/ssh_host_rsa_key
+  cp $ssh_host_rsa_key_path.pub $img_staging_dir/etc/ssh/ssh_host_rsa_key.pub
+fi
+

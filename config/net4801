@@ -2,6 +2,7 @@
 # http://soekris.com/downloads.html
 
 img_size_bytes=256901120 # SanDisk ultra II 256MB CF card
+
 arch=i386
 dist=squeeze
 kernel_package=linux-image-486
@@ -14,6 +15,7 @@ serial_console_baud=19200
 flash_drive=true
 
 dhcp_interfaces="eth0 eth1 eth2"
-
 ping_broadcast_reply=true
+
+ssh_host_rsa_key_path=config/net4801-ssh-host-rsa-key
 
