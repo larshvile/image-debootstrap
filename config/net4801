@@ -20,7 +20,7 @@ ping_broadcast_reply=true
 ssh_host_rsa_key_path=config/net4801-ssh-host-rsa-key
 
 if [ ! -f "$SSH_PUB_KEY" ]; then
-  die "$SSH_PUB_KEY not found.."
+  die "SSH_PUB_KEY variable not set / does not point to a file."
 fi
 ssh_authorized_keys+=("`cat $SSH_PUB_KEY`")
 

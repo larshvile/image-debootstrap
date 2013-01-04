@@ -33,33 +33,36 @@ img_staging_dir=$img_mount_dir.staging
 
 
 # parse parameters
-stage= # install|customize|bundle
+stage=$1 # install|customize|bundle
+shift
+
 config= # config-file
 disk_archive= # tar-file contaning the disk.staging folder for further processing
+customization_scripts= # path to scripts for the customize phase (using the same layout as install/ & bundle/)
 
-if ( ! getopts "s:c:" opt); then
-  echo "Usage: `basename $0` -s install|customize|bundle -c path-to-config-file [-a disk.staging.tar]"; # TODO custom scripts [-s customize-scripts-path] ?
+if ( ! getopts "c:" opt ); then
+  echo "Usage: `basename $0` install|customize|bundle -c path-to-config-file [-a disk.staging.tar] [-s path-to-customization-scripts]";
   exit $E_OPTERROR;
 fi
 
-while getopts "a:s:c:" opt; do
+while getopts "a:c:s:" opt; do
   case $opt in
     a)
       disk_archive=$OPTARG
       ;;
-    s)
-      stage=$OPTARG
-      ;;
     c)
       config=$OPTARG
       [ -f $config ] || die "$config is not a file"
+      ;;
+    s)
+      customization_scripts=$OPTARG
+      [ -d "$customization_scripts" ] || die "$customization_scripts is not a directory"
       ;;
     \?)
       die "Invalid option"
       ;;
   esac
 done
-
 
 # load the custom config
 [ -z "$config" ] && die "No config file specified"
@@ -93,20 +96,31 @@ print_cfg debootstrap_variant $debootstrap_variant
 echo
 echo
 
-
 # handle the selected stage
 case $stage in
+
   install)
     echo "Installing into $img_staging_dir"
     run_in_order install
     archive_staging_dir
     ;;
+
+  customize)
+    echo "Customizing installation"
+    [ -z "$disk_archive" ] && disk_archive="$img_staging_dir.install.tar"
+    extract_staging_dir $disk_archive
+    [ -z "$customization_scripts" ] && die "Specify customization scripts using the -s switch"
+    run_in_order $customization_scripts
+    archive_staging_dir
+    ;;
+
   bundle)
     echo "Creating bootable image in $img_file"
     [ -z "$disk_archive" ] && disk_archive="$img_staging_dir.customize.tar"
     extract_staging_dir $disk_archive
     run_in_order bundle
     ;;
+
   *)
     die "Invalid stage, use one of install|customize|bundle"
     ;;
