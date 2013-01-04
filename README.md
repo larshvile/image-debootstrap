@@ -24,5 +24,5 @@ sudo ./image-debootstrap -s bundle -c config/some-config-file [-a another-disk.s
 ```
 - creates 'work/disk.img', containing a partition table, and a bootable partition with the installation
 - qemu-system-$arch work/disk.img launches the image in qemu
-- dd if=work/disk.img of=/dev/$someDevice writes the image onto a disk
+- dd if=work/disk.img of=/dev/$someDevice writes the image onto a disk (or use ./write-image-to-device)
 
