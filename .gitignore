@@ -1,2 +1,5 @@
 work
 
+# vim temp files
+*.swp
+
