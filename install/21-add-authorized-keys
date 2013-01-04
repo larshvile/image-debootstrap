@@ -1,0 +1,17 @@
+#!/bin/bash -e
+
+if [ ${#ssh_authorized_keys[@]} = 0 ]; then
+  echo "No ssh_authorized_keys defined.."
+  exit
+fi
+
+print_header "Installing authorized keys"
+mkdir -p $img_staging_dir/root/.ssh
+
+for i in $(seq 0 $((${#ssh_authorized_keys[@]} - 1))); do
+  echo ${ssh_authorized_keys[$i]} >> $img_staging_dir/root/.ssh/authorized_keys
+done
+
+chmod 600 $img_staging_dir/root/.ssh/authorized_keys
+chmod 700 $img_staging_dir/root/.ssh
+
