@@ -2,18 +2,26 @@
 
 db_args="--arch $arch --variant=$debootstrap_variant --include=$kernel_package,$base_packages,$extra_packages $dist $img_staging_dir $apt_mirror"
 db_args_hash=`echo $db_args | sha1sum | awk '{print $1}'`
-db_tarball=work/debootstrap-$db_args_hash.tar
+db_pkg_tarball=work/cached-packages-$db_args_hash.tar
+db_inst_tarball=work/cached-debootstrap-$db_args_hash.tar
 
 echo "> Debootstrap arguments: $db_args"
 
 # prepare a tarball, if necessary
-if [ ! -f $db_tarball ]; then
-  echo "> Creating a new bootstrap tarball at $db_tarball"
-  debootstrap --make-tarball=$db_tarball $db_args || true
+if [ ! -f $db_pkg_tarball ]; then
+  echo "> Creating a new bootstrap tarball at $db_pkg_tarball"
+  debootstrap --make-tarball=$db_pkg_tarball $db_args || true
 else
-  echo "> Using existing bootstrap tarball at $db_tarball"
+  echo "> Packages have already been downloaded to $db_pkg_tarball"
 fi
 
-echo "> Installing debian $dist in $img_staging_dir"
-debootstrap --unpack-tarball=`readlink -e $db_tarball` $db_args
+if [ -f $db_inst_tarball ]; then
+  print_header "Using previously debootstrapped installation from $db_inst_tarball"
+  db_inst_tarball_path=`readlink -e $db_inst_tarball`
+  (cd work; tar -xf $db_inst_tarball_path)
+else
+  echo "> Installing debian $dist in $img_staging_dir"
+  debootstrap --unpack-tarball=`readlink -e $db_pkg_tarball` $db_args
+  tar -cf $db_inst_tarball -C work `basename $img_staging_dir`
+fi
 
