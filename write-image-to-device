@@ -1,0 +1,35 @@
+#!/bin/bash -e
+# Somewhat safely writes the image to a specified device =)
+
+. utils
+
+device=$1
+expected_model=$2
+expected_size=$3
+
+if [[ -z "$device" || -z "$expected_model" || -z "$expected_size" ]]; then
+  echo "Usage: `basename $0` /dev/someDevice \"model-as-reported-by-parted\" \"size-as-reported-by-parted\""
+  exit 1
+fi
+
+print_header "Verifying that $device is in fact $expected_model with size $expected_size"
+info=`parted -s $device print`
+echo "$info"
+echo
+echo
+
+if [[ ! "$info" =~ "Model: $expected_model" ]]; then
+  die "Expected to find Model: $expected_model"
+fi
+
+if [[ ! "$info" =~ "Disk $device: $expected_size" ]]; then
+  die "Expected to find Disk $device: $expected_size"
+fi
+
+cmd="dd if=work/disk.img of=$device bs=16k"
+
+echo "Ready to execute command: \"$cmd\""
+read -p "Press [Enter] key to continue..."
+
+$cmd
+
