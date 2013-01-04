@@ -1,4 +1,5 @@
-# config for the Soekris net4801 board
+# config for my Soekris net4801 device
+# http://soekris.com/downloads.html
 
 img_size_bytes=256901120 # SanDisk ultra II 256MB CF card
 arch=i386
