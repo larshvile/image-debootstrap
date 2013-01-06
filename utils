@@ -1,3 +1,4 @@
+#!/bin/bash
 
 function echo_err {
   echo "$1" 1>&2
