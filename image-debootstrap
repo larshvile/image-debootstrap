@@ -1,6 +1,8 @@
 #!/bin/bash -e
 
-. utils
+home="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+. $home/utils
 
 # Required config overwritten by the config file
 img_size_bytes= # $((1024 * 1024 * 512))
@@ -101,7 +103,7 @@ case $stage in
 
   install)
     echo "Installing into $img_staging_dir"
-    run_in_order install
+    run_in_order $home/install
     archive_staging_dir
     ;;
 
@@ -118,7 +120,7 @@ case $stage in
     echo "Creating bootable image in $img_file"
     [ -z "$disk_archive" ] && disk_archive="$img_staging_dir.customize.tar"
     extract_staging_dir $disk_archive
-    run_in_order bundle
+    run_in_order $home/bundle
     ;;
 
   *)
