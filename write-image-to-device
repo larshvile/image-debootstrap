@@ -1,7 +1,8 @@
 #!/bin/bash -e
 # Somewhat safely writes the image to a specified device =)
 
-. utils
+home="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+. $home/utils
 
 device=$1
 expected_model=$2
