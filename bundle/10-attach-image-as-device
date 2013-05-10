@@ -3,7 +3,7 @@
 # detach if necessary
 find_img_device
 if [ ! -z "$img_device" ]; then
-  ./99-cleanup
+  $path/99-cleanup
 fi
 
 print_header "Creating devices for partitions in $img_file"
