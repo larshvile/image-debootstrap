@@ -5,10 +5,13 @@ if [ -d $img_mount_dir ]; then
   set +e
   mounted=true
   while $mounted; do
-    umount $img_mount_dir
+    msg=`umount $img_mount_dir 2>&1`
     if [ $? = 0 ]; then
       mounted=false
+    elif [[ $msg =~ not\ mounted ]]; then
+      mounted=false
     else
+      echo $msg
       sleep 1
     fi
   done
